@@ -2,7 +2,7 @@ package com.ongroa.tilepuzzle;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.Menu;
@@ -22,16 +24,27 @@ import android.view.View;
 public class TileActivity extends Activity {
 	DrawView drawView;
 	int size = 3;
+	int oldal = 100;
 
+	@SuppressLint("NewApi")
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		size = getIntent().getIntExtra("SIZE", 3);
 		setContentView(R.layout.activity_tile);
 		drawView = new DrawView(this, size);
 		drawView.setBackgroundColor(Color.WHITE);
 		setContentView(drawView);
+		Display display = getWindowManager().getDefaultDisplay();
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+			Point point = new Point();
+			display.getSize(point);
+			oldal = Math.min(point.x, point.y - getStatusBarHeight()) / size;
+		} else {
+			oldal = Math.min(display.getHeight() - getStatusBarHeight(), 
+					display.getWidth()) / size;
+		}
 	}
 
 	@Override
@@ -52,6 +65,16 @@ public class TileActivity extends Activity {
 		}
 	}
 
+	private int getStatusBarHeight() {
+		int result = 0;
+		int resourceId = getResources().getIdentifier("status_bar_height", 
+				"dimen", "android");
+		if (resourceId > 0) {
+			result = getResources().getDimensionPixelSize(resourceId);
+		}
+		return result;
+	}
+
 	private void showHighScore() {
 		Intent intent = new Intent(this, HighScoreActivity.class);
 		intent.putExtra("SIZE", size);
@@ -63,7 +86,6 @@ public class TileActivity extends Activity {
 		Context context;
 		Table t;
 		int size = 10;
-		int oldal = 100;
 
 		public DrawView(Context context, int size) {
 			super(context);     
@@ -116,7 +138,10 @@ public class TileActivity extends Activity {
 
 		private void showResultDialog() {
 			AlertDialog.Builder builder = new AlertDialog.Builder(context);
-			builder.setMessage("Kiraktad " + t.getNofMoves() + " lépésből!");
+			if (t.getNofMoves() == 1)
+				builder.setMessage("You needed " + t.getNofMoves() + " move!");
+			else
+				builder.setMessage("You needed " + t.getNofMoves() + " moves!");
 			builder.setTitle(R.string.dialog_title);
 			builder.setPositiveButton(R.string.button_ok, 
 					new DialogInterface.OnClickListener() {
@@ -145,10 +170,6 @@ public class TileActivity extends Activity {
 		private void initTable() {
 			t = new Table();
 			t.setSize(size);
-			Display display = getWindowManager().getDefaultDisplay();
-			@SuppressWarnings("deprecation")
-			int width = display.getWidth();
-			oldal = width / size;
 			t.shuffle();
 			t.resetNofMoves();
 		}

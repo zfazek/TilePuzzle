@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Tile Puzzle</string>
-    <string name="dialog_title">Gratulálok!</string>
+    <string name="dialog_title">Well Done!</string>
     <string name="button_ok">OK</string>
     <string name="button_2">2 x 2</string>
     <string name="button_3">3 x 3</string>
