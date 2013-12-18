@@ -2,14 +2,12 @@ package com.ongroa.tilepuzzle;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import com.ongroa.tilepuzzle.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -28,7 +26,7 @@ public class TileActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		size = getIntent().getIntExtra("SIZE", 3);
 		setContentView(R.layout.activity_tile);
 		drawView = new DrawView(this, size);

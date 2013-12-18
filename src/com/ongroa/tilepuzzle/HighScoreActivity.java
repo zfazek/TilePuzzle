@@ -6,7 +6,6 @@ import com.ongroa.tilepuzzle.R;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,7 +24,7 @@ public class HighScoreActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 		size = getIntent().getIntExtra("SIZE", 3);
 		setContentView(R.layout.activity_highscore);
 		printHighScores();
@@ -83,6 +82,7 @@ public class HighScoreActivity extends Activity {
 	}
 
 }
+
 class MyAdapter<String> extends ArrayAdapter<String> {
 
 	public MyAdapter(Context context, int resource, String[] objects) {
