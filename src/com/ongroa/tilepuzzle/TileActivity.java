@@ -8,12 +8,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,25 +28,16 @@ public class TileActivity extends Activity {
 	int size = 3;
 	int oldal = 100;
 
-	@SuppressLint("NewApi")
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		System.out.println(getActionBarHeight());
 		super.onCreate(savedInstanceState);
 		size = getIntent().getIntExtra("SIZE", 3);
 		setContentView(R.layout.activity_tile);
 		drawView = new DrawView(this, size);
 		drawView.setBackgroundColor(Color.WHITE);
 		setContentView(drawView);
-		Display display = getWindowManager().getDefaultDisplay();
-		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-			Point point = new Point();
-			display.getSize(point);
-			oldal = Math.min(point.x, point.y - getStatusBarHeight()) / size;
-		} else {
-			oldal = Math.min(display.getHeight() - getStatusBarHeight(), 
-					display.getWidth()) / size;
-		}
+		setTileSize();
 	}
 
 	@Override
@@ -65,6 +58,15 @@ public class TileActivity extends Activity {
 		}
 	}
 
+	@Override
+	public void onConfigurationChanged(Configuration newConfig)	{
+		super.onConfigurationChanged(newConfig);
+		drawView = new DrawView(this, size);
+		drawView.setBackgroundColor(Color.WHITE);
+		setContentView(drawView);
+		setTileSize();
+	}
+
 	private int getStatusBarHeight() {
 		int result = 0;
 		int resourceId = getResources().getIdentifier("status_bar_height", 
@@ -73,6 +75,31 @@ public class TileActivity extends Activity {
 			result = getResources().getDimensionPixelSize(resourceId);
 		}
 		return result;
+	}
+
+	@SuppressLint("NewApi")
+	@SuppressWarnings("deprecation")
+	private void setTileSize() {
+		Display display = getWindowManager().getDefaultDisplay();
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+			Point point = new Point();
+			display.getSize(point);
+			oldal = Math.min(point.x, point.y - getStatusBarHeight() - getActionBarHeight()) / size;
+		} else {
+			oldal = Math.min(display.getHeight() - getStatusBarHeight() - getActionBarHeight(), 
+					display.getWidth()) / size;
+		}
+	}
+
+	@SuppressLint("InlinedApi")
+	private int getActionBarHeight() {
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+		TypedValue tv = new TypedValue();
+		this.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
+		return getResources().getDimensionPixelSize(tv.resourceId);
+		} else {
+			return 0;
+		}
 	}
 
 	private void showHighScore() {
