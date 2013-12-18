@@ -24,8 +24,7 @@ public class HighScoreActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-		size = getIntent().getIntExtra("SIZE", 3);
+		this.size = getIntent().getIntExtra("SIZE", 3);
 		setContentView(R.layout.activity_highscore);
 		printHighScores();
 	}
@@ -34,23 +33,20 @@ public class HighScoreActivity extends Activity {
 		GridView gridView = (GridView) findViewById(R.id.gridViewHighScore);
 		HighScore highscore = new HighScore(getBaseContext());
 		Log.d("Reading: ", "Reading all high scores...");
-		List<Result> results = highscore.getAllResults(size);
+		List<Result> results = highscore.getAllResults(this.size);
 		String[] array = new String[(results.size() + 1) * 3];
 		int n = 1;
 		int i = 0;
-		array[i++] = "";
+		array[i++] = "Rank:";
 		array[i++] = "Time:";
 		array[i++] = "Move:";
-		if (results.size() > 0) {
-			for (Result r : results) {
-				String log = "Size: " + r.getSize() + " ,Time: " + 
-						r.getTime() + " ,Move: " + r.getMove();
-				Log.d("Name: ", log);
-				array[i++] = "" + n++ + ".";
-				//				array[i++] = "" + r.getSize();
-				array[i++] = r.getTime();
-				array[i++] = "" + r.getMove();
-			}
+		for (Result r : results) {
+			String log = "Size: " + r.getSize() + " ,Time: " + 
+					r.getTime() + " ,Move: " + r.getMove();
+			Log.d("Name: ", log);
+			array[i++] = "" + n++ + ".";
+			array[i++] = r.getTime();
+			array[i++] = "" + r.getMove();
 		}
 		ArrayAdapter<String> adapter = new MyAdapter<String>(this,
 				android.R.layout.simple_list_item_1, array);
@@ -77,7 +73,7 @@ public class HighScoreActivity extends Activity {
 
 	private void resetHighScore() {
 		HighScore highscore = new HighScore(getBaseContext());
-		highscore.deleteCurrentSize(size);
+		highscore.deleteCurrentSize(this.size);
 		printHighScores();
 	}
 
