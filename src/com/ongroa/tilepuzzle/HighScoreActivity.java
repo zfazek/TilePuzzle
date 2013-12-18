@@ -79,6 +79,7 @@ public class HighScoreActivity extends Activity {
 
 }
 
+@SuppressWarnings("hiding")
 class MyAdapter<String> extends ArrayAdapter<String> {
 
 	public MyAdapter(Context context, int resource, String[] objects) {
